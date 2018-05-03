@@ -12,16 +12,12 @@ apiKey = ""
 with open("/secrets/default/google-api-key/key") as f:
     apiKey = f.read()
 
-# Create a Google Vision API request
-def requestForImageURL(url):
-    return { "requests": [ { "image": { "source": { "imageUri": url } },
-                             "features": [ { "type": "TEXT_DETECTION" },
-                                           { "type": "LABEL_DETECTION" } ] } ] }
-
 def vision(imgUrl):
     try:
         requestUrl = visionApiUrl + ("?key=%s" % apiKey)
-        visionReq = requestForImageURL(imgUrl)
+        visionReq = { "requests": [ { "image": { "source": { "imageUri": imgUrl } },
+                                      "features": [ { "type": "TEXT_DETECTION" },
+                                                    { "type": "LABEL_DETECTION" } ] } ] }
         resp = requests.post(requestUrl, json = visionReq)
         if resp.status_code != 200:
             return ("Error %s: %s" % (resp.status_code, resp.text)), resp.status_code

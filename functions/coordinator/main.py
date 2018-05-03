@@ -7,7 +7,13 @@ VISION_FUNCTION_URL = "http://router.fission/vision"
 TRANSLATION_FUNCTION_URL = "http://router.fission/translation"
 
 def main():
+    # Image to process
     imgUrl = request.form["url"]
+
+    # Language to translate to
+    targetLang = "en"
+    if "lang" in request.form:
+        targetLang = request.form["lang"]
 
     #
     # Call vision function over HTTP.
@@ -26,7 +32,7 @@ def main():
     # Call transation function over HTTP.
     #
     t2 = time.time()
-    resp = requests.post(TRANSLATION_FUNCTION_URL, data = { "text": text, "to": "en" })
+    resp = requests.post(TRANSLATION_FUNCTION_URL, data = { "text": text, "to": targetLang })
 
     if resp.status_code != 200:
         return ("Error translating %s: %s" % (resp.status_code, resp.text)), resp.status_code

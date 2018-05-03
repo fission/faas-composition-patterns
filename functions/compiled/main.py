@@ -25,7 +25,8 @@ def vision(imgUrl):
     try:
         requestUrl = visionApiUrl + ("?key=%s" % apiKey)
         visionReq = { "requests": [ { "image": { "source": { "imageUri": imgUrl } },
-                             "features": [ { "type": "TEXT_DETECTION" } ] } ] }
+                                      "features": [ { "type": "TEXT_DETECTION" },
+                                                    { "type": "LABEL_DETECTION" } ] } ] }
         resp = requests.post(requestUrl, json = visionReq)
         if resp.status_code != 200:
             return ("Error %s: %s" % (resp.status_code, resp.text)), resp.status_code
@@ -52,10 +53,27 @@ def translate(text, fromLang, toLang):
 # Get image URL, call vision, call translation, return translated text.
 #
 def main():
+    # Language to translate to
+    targetLang = "en"
+    if "lang" in request.form:
+        targetLang = request.form["lang"]
+
+    # Vision
     imgUrl = request.form["url"]
     visionResponse = vision(imgUrl)
-    text = visionResponse["responses"][0]["textAnnotations"][0]["description"]
-    translationResponse = translate(text, "", "en")
+
+    # Text or label
+    text = ""
+    r = visionResponse["responses"][0]
+    current_app.logger.info("r = %s", r)
+    if "textAnnotations" in r:
+        text = r["textAnnotations"][0]["description"]
+    elif "labelAnnotations" in r:
+        text = r["labelAnnotations"][0]["description"]
+
+    # Translate
+    translationResponse = translate(text, "", targetLang)
     translatedText = translationResponse["data"]["translations"][0]["translatedText"]
+
     return translatedText + "\n", 200
     
