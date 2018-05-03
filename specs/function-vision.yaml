@@ -1,0 +1,52 @@
+include:
+- functions/vision/main.py
+kind: ArchiveUploadSpec
+name: vision-py
+
+---
+apiVersion: fission.io/v1
+kind: Package
+metadata:
+  creationTimestamp: null
+  name: vision-py-za0n
+  namespace: default
+spec:
+  deployment:
+    checksum: {}
+    type: url
+    url: archive://vision-py
+  environment:
+    name: python
+    namespace: default
+  source:
+    checksum: {}
+status:
+  buildstatus: none
+
+---
+apiVersion: fission.io/v1
+kind: Function
+metadata:
+  creationTimestamp: null
+  name: vision
+  namespace: default
+spec:
+  InvokeStrategy:
+    ExecutionStrategy:
+      ExecutorType: poolmgr
+      MaxScale: 1
+      MinScale: 0
+      TargetCPUPercent: 80
+    StrategyType: execution
+  configmaps: null
+  environment:
+    name: python
+    namespace: default
+  package:
+    packageref:
+      name: vision-py-za0n
+      namespace: default
+  resources: {}
+  secrets:
+  - name: google-api-key
+    namespace: default

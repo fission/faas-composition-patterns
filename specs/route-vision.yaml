@@ -1,0 +1,13 @@
+apiVersion: fission.io/v1
+kind: HTTPTrigger
+metadata:
+  creationTimestamp: null
+  name: vision
+  namespace: default
+spec:
+  functionref:
+    name: vision
+    type: name
+  host: ""
+  method: POST
+  relativeurl: /vision

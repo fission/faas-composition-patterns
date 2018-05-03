@@ -1,0 +1,30 @@
+#
+# Simple workflow with two tasks: vision and translation.  A workflow
+# is just a type of function.  The Vision task gets the workflow
+# function's input and turns it into text.  The Translate task gets
+# the Vision tasks output and translates it.  The workflow function
+# returns the Translate task's output as its own output.
+#
+apiVersion: 1
+output: Translate  # The output of this workflow should be taken from
+                   # the output of the Translate task below 
+tasks:
+
+  #
+  # The vision task runs first because it has no dependencies on any
+  # other task (not because it's first in this yaml file).
+  #
+  Vision:
+    run: vision
+    inputs: "{$.Invocation.Inputs.default}"
+
+  # 
+  # The translation task runs next.  It has two types of dependencies
+  # on the Vision task: _control flow_ (what runs after what) and
+  # _data flow_ (how does one task's output get to the other).
+  #
+  Translate:
+    run: translation
+    inputs: "{$.Tasks.Vision.Output}"    # Data flow
+    requires: 
+    - Vision                             # Control flow 

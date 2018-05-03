@@ -1,0 +1,13 @@
+apiVersion: fission.io/v1
+kind: HTTPTrigger
+metadata:
+  creationTimestamp: null
+  name: compiled
+  namespace: default
+spec:
+  functionref:
+    name: compiled
+    type: name
+  host: ""
+  method: POST
+  relativeurl: /compiled

@@ -1,0 +1,13 @@
+apiVersion: fission.io/v1
+kind: HTTPTrigger
+metadata:
+  creationTimestamp: null
+  name: translation
+  namespace: default
+spec:
+  functionref:
+    name: translation
+    type: name
+  host: ""
+  method: POST
+  relativeurl: /translation
