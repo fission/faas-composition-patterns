@@ -1,5 +1,5 @@
-# Simple function to call the Google Vision API.  Currently set up for
-# OCR but we could use it for label detection, smart crop etc.
+# Simple function to call the Google Vision API.  Does OCR and label
+# detection, and return the first label if there's no text.
 
 from flask import current_app, request
 import json
@@ -15,7 +15,8 @@ with open("/secrets/default/google-api-key/key") as f:
 # Create a Google Vision API request
 def requestForImageURL(url):
     return { "requests": [ { "image": { "source": { "imageUri": url } },
-                             "features": [ { "type": "TEXT_DETECTION" } ] } ] }
+                             "features": [ { "type": "TEXT_DETECTION" },
+                                           { "type": "LABEL_DETECTION" } ] } ] }
 
 def vision(imgUrl):
     try:
@@ -34,6 +35,16 @@ def vision(imgUrl):
 def main():
     imgUrl = request.form["url"]
     visionResponse = vision(imgUrl)
-    #(visionResponse["responses"][0]["labelAnnotations"][0]["description"]), 200
-    return "%s\n" % visionResponse["responses"][0]["textAnnotations"][0]["description"], 200
+
+    # If it's a picture of text, return that text. Otherwise, return a
+    # description of what we see.
+    text = ""
+    r = visionResponse["responses"][0]
+    current_app.logger.info("r = %s", r)
+    if "textAnnotations" in r:
+        text = r["textAnnotations"][0]["description"]
+    elif "labelAnnotations" in r:
+        text = r["labelAnnotations"][0]["description"]
+
+    return "%s\n" % text, 200
 
