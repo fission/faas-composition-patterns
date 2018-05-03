@@ -57,5 +57,5 @@ def main():
     text = visionResponse["responses"][0]["textAnnotations"][0]["description"]
     translationResponse = translate(text, "", "en")
     translatedText = translationResponse["data"]["translations"][0]["translatedText"]
-    return translatedText, 200
+    return translatedText + "\n", 200
     
