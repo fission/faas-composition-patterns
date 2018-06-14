@@ -55,11 +55,11 @@ def translate(text, fromLang, toLang):
 def main():
     # Language to translate to
     targetLang = "en"
-    if "lang" in request.form:
-        targetLang = request.form["lang"]
+    if "lang" in request.json:
+        targetLang = request.json["lang"]
 
     # Vision
-    imgUrl = request.form["url"]
+    imgUrl = request.json["url"]
     visionResponse = vision(imgUrl)
 
     # Text or label

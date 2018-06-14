@@ -1,0 +1,13 @@
+apiVersion: fission.io/v1
+kind: HTTPTrigger
+metadata:
+  creationTimestamp: null
+  name: translated-vision
+  namespace: default
+spec:
+  functionref:
+    name: translated-vision
+    type: name
+  host: ""
+  method: POST
+  relativeurl: /translated-vision

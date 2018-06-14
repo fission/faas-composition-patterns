@@ -22,9 +22,9 @@ def translate(text, fromLang, toLang):
 
 def main():
     try:
-        text = request.form.get("text", "Hello, world!")
-        fromLang = request.form.get("from", "")
-        toLang = request.form.get("to", "en")
+        text = request.json["text"]           #.get("text", "Hello, world!")
+        fromLang = request.json["from"] or "" #.get("from", "")
+        toLang = request.json["to"] or "en"   #.get("to", "en")
         
         current_app.logger.info("Translating %s from %s to %s" % (text, fromLang, toLang))
 

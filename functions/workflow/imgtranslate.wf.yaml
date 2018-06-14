@@ -12,16 +12,17 @@ tasks:
 
   #
   # The vision task runs first because it has no dependencies on any
-  # other task (not because it's first in this yaml file).
+  # other task.
   #
   Vision:
-    run: vision
-    inputs: "{$.Invocation.Inputs.default}"
+    run: vision             # Run the 'vision' function
+    #inputs: "{ param() }"   # The workflow's inputs are accessed as param()
+    inputs: "{$.Invocation.Inputs}"
 
   # 
   # The translation task runs next.  It has two types of dependencies
   # on the Vision task: _control flow_ (what runs after what) and
-  # _data flow_ (how does one task's output get to the other).
+  # _data flow_ (how one task's output gets to the other).
   #
   Translate:
     run: translation
