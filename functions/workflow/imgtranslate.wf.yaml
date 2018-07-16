@@ -2,7 +2,7 @@
 # Simple workflow with two tasks: vision and translation.  A workflow
 # is just a type of function.  The Vision task gets the workflow
 # function's input and turns it into text.  The Translate task gets
-# the Vision tasks output and translates it.  The workflow function
+# the Vision task's output and translates it.  The workflow function
 # returns the Translate task's output as its own output.
 #
 apiVersion: 1
@@ -16,8 +16,24 @@ tasks:
   #
   Vision:
     run: vision             # Run the 'vision' function
-    #inputs: "{ param() }"   # The workflow's inputs are accessed as param()
-    inputs: "{$.Invocation.Inputs}"
+    inputs:
+      method: post
+      headers:
+        content-length: 105
+      default: "{ param() }"  # The workflow's inputs are accessed as param()
+
+  #
+  # A workflow-internal task to transform the output of the vision
+  # task into a JSON object that the translation task accepts.
+  #
+  ComposeJson:
+    run: compose
+    inputs:
+      text: "{$.Tasks.Vision.Output}"    # Data flow
+      from: "en"
+      to: "es"
+    requires:
+      - Vision
 
   # 
   # The translation task runs next.  It has two types of dependencies
@@ -26,6 +42,11 @@ tasks:
   #
   Translate:
     run: translation
-    inputs: "{$.Tasks.Vision.Output}"    # Data flow
+    inputs:
+      method: post
+      headers:
+        content-type: application/json
+        content-length: 36
+      default: "{$.Tasks.ComposeJson.Output}"
     requires: 
-    - Vision                             # Control flow 
+    - ComposeJson                             # Control flow 

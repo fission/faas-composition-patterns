@@ -3,7 +3,7 @@
 from flask import current_app, request
 import json
 import requests
-
+import pprint
 # Google Translation REST API URL. Docs at
 # https://cloud.google.com/translate/docs/translating-text#translate-translate-text-protocol
 translationApiUrl = "https://translation.googleapis.com/language/translate/v2"
@@ -21,6 +21,7 @@ def translate(text, fromLang, toLang):
     return result
 
 def main():
+    log_request(request)
     try:
         text = request.json["text"]           #.get("text", "Hello, world!")
         fromLang = request.json["from"] or "" #.get("from", "")
@@ -34,4 +35,21 @@ def main():
     except Exception as e:
         current_app.logger.error("error %s" % e)
         return "Error", 500
+
+
+def log_request(req):
+    request_dict = {
+        "url": req.url,
+        #"args": req.args,
+        "content_type": req.content_type,
+        "authorization": req.authorization,
+        #"cache_control": req.cache_control,
+        "content_length": req.content_length,
+        "content_encoding": req.content_encoding,
+        "cookies": req.cookies,
+        "form": req.form,
+        "data": req.get_data()
+    }
+    s = pprint.pformat(request_dict)
+    current_app.logger.info("Request:\n---\n%s\n---" % s)
 

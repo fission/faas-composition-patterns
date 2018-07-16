@@ -58,7 +58,8 @@ def log_request(req):
         "content_length": req.content_length,
         "content_encoding": req.content_encoding,
         "cookies": req.cookies,
-        "form": req.form
+        "form": req.form,
+        "data": req.get_data()
     }
     s = pprint.pformat(request_dict)
     current_app.logger.info("Request:\n---\n%s\n---" % s)
