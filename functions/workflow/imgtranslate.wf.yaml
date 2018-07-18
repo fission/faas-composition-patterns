@@ -17,9 +17,9 @@ tasks:
   Vision:
     run: vision             # Run the 'vision' function
     inputs:
-      method: post
+      method: POST
       headers:
-        content-length: 105
+        content-type: application/json
       default: "{ param() }"  # The workflow's inputs are accessed as param()
 
   #
@@ -43,10 +43,9 @@ tasks:
   Translate:
     run: translation
     inputs:
-      method: post
+      method: POST
       headers:
         content-type: application/json
-        content-length: 36
       default: "{$.Tasks.ComposeJson.Output}"
     requires: 
     - ComposeJson                             # Control flow 
