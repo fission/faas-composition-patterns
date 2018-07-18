@@ -32,7 +32,7 @@ def main():
     # Call transation function over HTTP.
     #
     t2 = time.time()
-    resp = requests.post(TRANSLATION_FUNCTION_URL, json = { "text": text, "to": targetLang })
+    resp = requests.post(TRANSLATION_FUNCTION_URL, json = { "text": text, "to": targetLang, "from": "en" })
 
     if resp.status_code != 200:
         return ("Error translating %s: %s" % (resp.status_code, resp.text)), resp.status_code
