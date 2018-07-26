@@ -1,0 +1,50 @@
+include:
+- functions/workflow/imgtranslate.wf.yaml
+kind: ArchiveUploadSpec
+name: imgtranslate-wf-yaml
+
+---
+apiVersion: fission.io/v1
+kind: Package
+metadata:
+  creationTimestamp: null
+  name: imgtranslate-wf-yaml-ldom
+  namespace: default
+spec:
+  deployment:
+    checksum: {}
+  environment:
+    name: workflow
+    namespace: default
+  source:
+    checksum: {}
+    type: url
+    url: archive://imgtranslate-wf-yaml
+status:
+  buildstatus: pending
+
+---
+apiVersion: fission.io/v1
+kind: Function
+metadata:
+  creationTimestamp: null
+  name: translated-vision
+  namespace: default
+spec:
+  InvokeStrategy:
+    ExecutionStrategy:
+      ExecutorType: poolmgr
+      MaxScale: 1
+      MinScale: 0
+      TargetCPUPercent: 80
+    StrategyType: execution
+  configmaps: null
+  environment:
+    name: workflow
+    namespace: default
+  package:
+    packageref:
+      name: imgtranslate-wf-yaml-ldom
+      namespace: default
+  resources: {}
+  secrets: null

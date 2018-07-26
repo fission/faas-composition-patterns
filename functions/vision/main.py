@@ -4,6 +4,7 @@
 from flask import current_app, request
 import json
 import requests
+import pprint
 
 # Google Vision API URL. Docs at https://cloud.google.com/vision/docs/request
 visionApiUrl = "https://vision.googleapis.com/v1/images:annotate"
@@ -27,9 +28,11 @@ def vision(imgUrl):
     except Exception as e:
         current_app.logger.error("error %s" % e)
         return "Error", 500
-
+    
 def main():
-    imgUrl = request.form["url"]
+    log_request(request)
+
+    imgUrl = request.json["url"]
     visionResponse = vision(imgUrl)
 
     # If it's a picture of text, return that text. Otherwise, return a
@@ -43,4 +46,21 @@ def main():
         text = r["labelAnnotations"][0]["description"]
 
     return "%s\n" % text, 200
+
+
+def log_request(req):
+    request_dict = {
+        "url": req.url,
+        #"args": req.args,
+        "content_type": req.content_type,
+        "authorization": req.authorization,
+        #"cache_control": req.cache_control,
+        "content_length": req.content_length,
+        "content_encoding": req.content_encoding,
+        "cookies": req.cookies,
+        "form": req.form,
+        "data": req.get_data()
+    }
+    s = pprint.pformat(request_dict)
+    current_app.logger.info("Request:\n---\n%s\n---" % s)
 
